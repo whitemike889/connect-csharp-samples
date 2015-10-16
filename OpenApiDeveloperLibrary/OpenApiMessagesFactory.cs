@@ -403,7 +403,7 @@ namespace OpenApiDeveloperLibrary
             _msg.SetSpotSubscription(spotSubscription);
             return CreateMessage((uint)_msg.PayloadType, _msg.Build().ToByteString(), clientMsgId);
         }
-        public ProtoMessage CreateGetAllSpotSubscriptionsRequest(uint subscriptionId, string clientMsgId = null)
+        public ProtoMessage CreateGetAllSpotSubscriptionsRequest(string clientMsgId = null)
         {
             var _msg = ProtoOAGetAllSpotSubscriptionsReq.CreateBuilder();
             return CreateMessage((uint)_msg.PayloadType, _msg.Build().ToByteString(), clientMsgId);

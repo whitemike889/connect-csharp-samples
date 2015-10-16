@@ -361,6 +361,7 @@ namespace TradingApiTest_CSharp
             new MenuItem('S', "send subscription request", SendSubscribeForTradingEventsRequest),
             new MenuItem('U', "send unsubscribe request", SendUnsubscribeForTradingEventsRequest),
             new MenuItem('G', "send getting all subscriptions request", SendGetAllSubscriptionsForTradingEventsRequest),
+            new MenuItem('N', "send getting all spot subscriptions request", SendGetAllSubscriptionsForSpotEventsRequest),
             new MenuItem('1', "send market order", SendMarketOrderRequest),
             new MenuItem('2', "send limit order", SendLimitOrderRequest),
             new MenuItem('3', "send stop order", SendStopOrderRequest),
@@ -415,6 +416,12 @@ namespace TradingApiTest_CSharp
             if (isDebugIsOn) Console.WriteLine("SendGetAllSubscriptionsForTradingEventsRequest() Message to be send:\n{0}", OpenApiMessagesPresentation.ToString(_msg));
             writeQueue.Enqueue(_msg.ToByteArray());
         }
+        static void SendGetAllSubscriptionsForSpotEventsRequest(OpenApiMessagesFactory msgFactory, Queue writeQueue)
+        {
+            var _msg = msgFactory.CreateGetAllSpotSubscriptionsRequest();
+            if (isDebugIsOn) Console.WriteLine("SendGetAllSubscriptionsForSpotEventsRequest() Message to be send:\n{0}", OpenApiMessagesPresentation.ToString(_msg));
+            writeQueue.Enqueue(_msg.ToByteArray());
+        }        
         static void SetClientMessageId(OpenApiMessagesFactory msgFactory, Queue writeQueue)
         {
             if (isDebugIsOn) Console.WriteLine("SetClientMessageId() Current message ID:\"{0}\"", (clientMsgId==null?"null":clientMsgId) );

@@ -99,7 +99,18 @@ namespace OpenApiDeveloperLibrary
                 case ProtoOAPayloadType.OA_GET_ALL_SPOT_SUBSCRIPTIONS_REQ:
                     return "GetAllSpotSubscriptionsRequest{}";
                 case ProtoOAPayloadType.OA_GET_ALL_SPOT_SUBSCRIPTIONS_RES:
-                    return "GetAllSpotSubscriptionsResponse{}";
+                    String _all_str = "GetAllSpotSubscriptionsResponse{";
+                     ProtoOAGetAllSpotSubscriptionsRes _all_res = ProtoOAGetAllSpotSubscriptionsRes.CreateBuilder().MergeFrom(msg.Payload).Build();
+                     _all_str += "subscriptions=[";
+                     foreach (ProtoOASpotSubscription subscription in _all_res.SpotSubscriptionsList) {
+                        _all_str += "{AccountId=" + subscription.AccountId + ", SubscriptionId=" + subscription.SubscriptionId + ", SymbolNamesList=[";
+                        foreach (String symbolName in subscription.SymbolNamesList) {
+                            _all_str += symbolName + ", ";
+                        }
+                        _all_str += "]}, ";
+                        }
+                    _all_str += "]}";
+                    return _all_str;
                 case ProtoOAPayloadType.OA_SPOT_EVENT:
                     var _spot_event = ProtoOASpotEvent.CreateBuilder().MergeFrom(msg.Payload).Build();
                     return "SpotEvent{subscriptionId:" + _spot_event.SubscriptionId + ", symbolName:" + _spot_event.SymbolName + ", bidPrice:" + (_spot_event.HasBidPrice ? _spot_event.BidPrice.ToString() : "       ") + ", askPrice:" + (_spot_event.HasAskPrice ? _spot_event.AskPrice.ToString() : "       ") + "}";
