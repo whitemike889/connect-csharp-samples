@@ -365,7 +365,7 @@ namespace TradingApiTest_CSharp
             new MenuItem('1', "send market order", SendMarketOrderRequest),
             new MenuItem('2', "send limit order", SendLimitOrderRequest),
             new MenuItem('3', "send stop order", SendStopOrderRequest),
-            new MenuItem('4', "send market range order", NotImplementedCommand),
+            new MenuItem('4', "send market range order", SendMarketRangeOrderRequest),
             new MenuItem('9', "close last modified position", SendClosePositionRequest),
             new MenuItem('C', "cancel last pending order", NotImplementedCommand),
             new MenuItem('L', "set loss level", NotImplementedCommand),
@@ -439,6 +439,12 @@ namespace TradingApiTest_CSharp
         {
             var _msg = msgFactory.CreateMarketOrderRequest(testAccountId, testAccessToken, "EURUSD", OpenApiLib.ProtoTradeSide.BUY, testVolume, clientMsgId);
             if (isDebugIsOn) Console.WriteLine("SendMarketOrderRequest() Message to be send:\n{0}", OpenApiMessagesPresentation.ToString(_msg));
+            writeQueue.Enqueue(_msg.ToByteArray());
+        }
+        static void SendMarketRangeOrderRequest(OpenApiMessagesFactory msgFactory, Queue writeQueue)
+        {
+            var _msg = msgFactory.CreateMarketRangeOrderRequest(testAccountId, testAccessToken, "EURUSD", OpenApiLib.ProtoTradeSide.BUY, testVolume, 1.09, 10, clientMsgId);
+            if (isDebugIsOn) Console.WriteLine("SendMarketRangeOrderRequest() Message to be send:\n{0}", OpenApiMessagesPresentation.ToString(_msg));
             writeQueue.Enqueue(_msg.ToByteArray());
         }
         static void SendLimitOrderRequest(OpenApiMessagesFactory msgFactory, Queue writeQueue)
