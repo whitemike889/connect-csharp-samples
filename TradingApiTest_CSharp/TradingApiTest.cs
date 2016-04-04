@@ -24,6 +24,7 @@ namespace TradingApiTest_CSharp
         static long testAccountId = 62002; // login 3000041 pass:123456 on http://sandbox-ct.spotware.com
         static string testAccessToken = "test002_access_token";
 
+        static long testOrderId = -1;
         static long testPositionId = -1;
         //static Dictionary<long, string> testOrdersMap = new Dictionary<long,string>();
         static long testVolume = 1000000;
@@ -323,12 +324,14 @@ namespace TradingApiTest_CSharp
                     break;
                 case (int)OpenApiLib.ProtoOAPayloadType.OA_EXECUTION_EVENT:
                     var _payload_msg = msgFactory.GetExecutionEvent(rawData);
-
+                    if (_payload_msg.HasOrder)
+                    {
+                        testOrderId = _payload_msg.Order.OrderId;
+                    }
                     if (_payload_msg.HasPosition)
                     {
                         testPositionId = _payload_msg.Position.PositionId;
                     }
-
                     break;
                 default:
                     break;
@@ -366,6 +369,7 @@ namespace TradingApiTest_CSharp
             new MenuItem('2', "send limit order", SendLimitOrderRequest),
             new MenuItem('3', "send stop order", SendStopOrderRequest),
             new MenuItem('4', "send market range order", SendMarketRangeOrderRequest),
+            new MenuItem('5', "send amend limit order", SendAmendLimitOrderRequest),
             new MenuItem('9', "close last modified position", SendClosePositionRequest),
             new MenuItem('C', "cancel last pending order", NotImplementedCommand),
             new MenuItem('L', "set loss level", NotImplementedCommand),
@@ -449,7 +453,13 @@ namespace TradingApiTest_CSharp
         }
         static void SendLimitOrderRequest(OpenApiMessagesFactory msgFactory, Queue writeQueue)
         {
-            var _msg = msgFactory.CreateLimitOrderRequest(testAccountId, testAccessToken, "EURUSD", OpenApiLib.ProtoTradeSide.BUY, 1000000, 1.8, clientMsgId);
+            var _msg = msgFactory.CreateLimitOrderRequest(testAccountId, testAccessToken, "EURUSD", OpenApiLib.ProtoTradeSide.BUY, 1000000, 1.11, clientMsgId);
+            if (isDebugIsOn) Console.WriteLine("SendLimitOrderRequest() Message to be send:\n{0}", OpenApiMessagesPresentation.ToString(_msg));
+            writeQueue.Enqueue(_msg.ToByteArray());
+        }
+        static void SendAmendLimitOrderRequest(OpenApiMessagesFactory msgFactory, Queue writeQueue)
+        {
+            var _msg = msgFactory.CreateAmendLimitOrderRequest(testAccountId, testAccessToken, testOrderId, 1.10, clientMsgId);
             if (isDebugIsOn) Console.WriteLine("SendLimitOrderRequest() Message to be send:\n{0}", OpenApiMessagesPresentation.ToString(_msg));
             writeQueue.Enqueue(_msg.ToByteArray());
         }

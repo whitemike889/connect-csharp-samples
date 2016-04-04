@@ -270,6 +270,8 @@ namespace OpenApiDeveloperLibrary
             _msg.SetVolume(volume);
             _msg.SetLimitPrice(limitPrice);
             _msg.SetComment("TradingApiTest.CreateLimitOrderRequest");
+            DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            _msg.SetExpirationTimestamp((long)(DateTime.UtcNow.AddHours(1) - epoch).TotalMilliseconds);
             return CreateMessage((uint)_msg.PayloadType, _msg.Build().ToByteString(), clientMsgId);
         }
         public ProtoMessage CreateStopOrderRequest(long accountId, string accessToken, string symbolName, ProtoTradeSide tradeSide, long volume, double stopPrice, string clientMsgId = null)
@@ -337,6 +339,7 @@ namespace OpenApiDeveloperLibrary
             _msg.SetAccessToken(accessToken);
             _msg.SetOrderId(orderId);
             _msg.SetLimitPrice(limitPrice);
+            _msg.SetTakeProfitPrice(limitPrice + 0.02);
             return CreateMessage((uint)_msg.PayloadType, _msg.Build().ToByteString(), clientMsgId);
         }
         public ProtoMessage CreateAmendStopOrderRequest(long accountId, string accessToken, long orderId, double stopPrice, string clientMsgId = null)
