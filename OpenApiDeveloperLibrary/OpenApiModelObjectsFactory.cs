@@ -31,7 +31,7 @@ namespace OpenApiDeveloperLibrary
 
         #region Creating new Proto Model objects with parameters specified
         public ProtoOAOrder.Builder CreateOrderBuilder(long orderId, long accountId, ProtoOAOrderType orderType, ProtoTradeSide tradeSide, string symbolName, long requestedVolume, long executedVolume, bool closingOrder,
-            string channel = null, string comment=null)
+            string channel = null, string comment = null)
         {
             var _obj = ProtoOAOrder.CreateBuilder();
             _obj.SetOrderId(orderId);

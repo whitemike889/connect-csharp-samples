@@ -8,6 +8,7 @@ using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Collections.Concurrent;
+using OpenApiLib;
 using OpenApiDeveloperLibrary;
 
 namespace TradingApiTest_CSharp
@@ -15,15 +16,15 @@ namespace TradingApiTest_CSharp
     class TradingApiTest
     {
         #region Settings...
+        //Sandbox
         static string apiHost = "sandbox-tradeapi.spotware.com";
+        static string clientPublicId = "87_5vwhu6cpaeo8c4gscc8g488wookwgw4g40sgws8sk84s004gw4";
+        static string clientSecret = "2fonxkktmpesg0swgk0g84gcoo4gw80woscg848s4ow0w4sg08";
+
+        static long testAccountId = 89214; // login 3000041 pass:123456 on http://sandbox-ct.spotware.com
+        static string testAccessToken = "SyHqlkNiFXLghWYx1fwZfGbIW-TsDrY3_b4kWLhsFnA";
+
         static int apiPort = 5032;
-
-        static string clientPublicId = "7_5az7pj935owsss8kgokcco84wc8osk0g0gksow0ow4s4ocwwgc";
-        static string clientSecret = "49p1ynqfy7c4sw84gwoogwwsk8cocg8ow8gc8o80c0ws448cs4";
-
-        static long testAccountId = 62002; // login 3000041 pass:123456 on http://sandbox-ct.spotware.com
-        static string testAccessToken = "test002_access_token";
-
         static long testOrderId = -1;
         static long testPositionId = -1;
         //static Dictionary<long, string> testOrdersMap = new Dictionary<long,string>();
@@ -66,7 +67,7 @@ namespace TradingApiTest_CSharp
 
                 if (DateTime.Now > lastSentMsgTimestamp)
                 {
-                    SendPingRequest(msgFactory, messagesQueue);
+                    //  SendPingRequest(msgFactory, messagesQueue);
                 }
             }
         }
@@ -320,9 +321,9 @@ namespace TradingApiTest_CSharp
 
             switch (_msg.PayloadType)
             {
-                case (int)OpenApiLib.ProtoPayloadType.HEARTBEAT_EVENT:
+                case (int)ProtoPayloadType.HEARTBEAT_EVENT:
                     break;
-                case (int)OpenApiLib.ProtoOAPayloadType.OA_EXECUTION_EVENT:
+                case (int)ProtoOAPayloadType.OA_EXECUTION_EVENT:
                     var _payload_msg = msgFactory.GetExecutionEvent(rawData);
                     if (_payload_msg.HasOrder)
                     {
@@ -382,7 +383,7 @@ namespace TradingApiTest_CSharp
 
         static void SendPingRequest(OpenApiMessagesFactory msgFactory, Queue writeQueue)
         {
-            var _msg = msgFactory.CreatePingRequest((ulong)DateTime.Now.Ticks);
+            var _msg = msgFactory.CreatePingRequest(DateTime.Now.Ticks);
             if (isDebugIsOn) Console.WriteLine("SendPingRequest() Message to be send:\n{0}", OpenApiMessagesPresentation.ToString(_msg));
             writeQueue.Enqueue(_msg.ToByteArray());
         }
@@ -394,6 +395,7 @@ namespace TradingApiTest_CSharp
         }
         static void SendAuthorizationRequest(OpenApiMessagesFactory msgFactory, Queue writeQueue)
         {
+
             var _msg = msgFactory.CreateAuthorizationRequest(clientPublicId, clientSecret);
             if (isDebugIsOn) Console.WriteLine("SendAuthorizationRequest() Message to be send:\n{0}", OpenApiMessagesPresentation.ToString(_msg));
             writeQueue.Enqueue(_msg.ToByteArray());
@@ -425,10 +427,10 @@ namespace TradingApiTest_CSharp
             var _msg = msgFactory.CreateGetAllSpotSubscriptionsRequest();
             if (isDebugIsOn) Console.WriteLine("SendGetAllSubscriptionsForSpotEventsRequest() Message to be send:\n{0}", OpenApiMessagesPresentation.ToString(_msg));
             writeQueue.Enqueue(_msg.ToByteArray());
-        }        
+        }
         static void SetClientMessageId(OpenApiMessagesFactory msgFactory, Queue writeQueue)
         {
-            if (isDebugIsOn) Console.WriteLine("SetClientMessageId() Current message ID:\"{0}\"", (clientMsgId==null?"null":clientMsgId) );
+            if (isDebugIsOn) Console.WriteLine("SetClientMessageId() Current message ID:\"{0}\"", (clientMsgId == null ? "null" : clientMsgId));
             if (clientMsgId != null)
             {
                 clientMsgId = null;
@@ -441,19 +443,19 @@ namespace TradingApiTest_CSharp
         }
         static void SendMarketOrderRequest(OpenApiMessagesFactory msgFactory, Queue writeQueue)
         {
-            var _msg = msgFactory.CreateMarketOrderRequest(testAccountId, testAccessToken, "EURUSD", OpenApiLib.ProtoTradeSide.BUY, testVolume, clientMsgId);
+            var _msg = msgFactory.CreateMarketOrderRequest(testAccountId, testAccessToken, "EURUSD", ProtoTradeSide.BUY, testVolume, clientMsgId);
             if (isDebugIsOn) Console.WriteLine("SendMarketOrderRequest() Message to be send:\n{0}", OpenApiMessagesPresentation.ToString(_msg));
             writeQueue.Enqueue(_msg.ToByteArray());
         }
         static void SendMarketRangeOrderRequest(OpenApiMessagesFactory msgFactory, Queue writeQueue)
         {
-            var _msg = msgFactory.CreateMarketRangeOrderRequest(testAccountId, testAccessToken, "EURUSD", OpenApiLib.ProtoTradeSide.BUY, testVolume, 1.09, 10, clientMsgId);
+            var _msg = msgFactory.CreateMarketRangeOrderRequest(testAccountId, testAccessToken, "EURUSD", ProtoTradeSide.BUY, testVolume, 1.09, 10, clientMsgId);
             if (isDebugIsOn) Console.WriteLine("SendMarketRangeOrderRequest() Message to be send:\n{0}", OpenApiMessagesPresentation.ToString(_msg));
             writeQueue.Enqueue(_msg.ToByteArray());
         }
         static void SendLimitOrderRequest(OpenApiMessagesFactory msgFactory, Queue writeQueue)
         {
-            var _msg = msgFactory.CreateLimitOrderRequest(testAccountId, testAccessToken, "EURUSD", OpenApiLib.ProtoTradeSide.BUY, 1000000, 1.11, clientMsgId);
+            var _msg = msgFactory.CreateLimitOrderRequest(testAccountId, testAccessToken, "EURUSD", ProtoTradeSide.BUY, 1000000, 1.11, clientMsgId);
             if (isDebugIsOn) Console.WriteLine("SendLimitOrderRequest() Message to be send:\n{0}", OpenApiMessagesPresentation.ToString(_msg));
             writeQueue.Enqueue(_msg.ToByteArray());
         }
@@ -465,7 +467,7 @@ namespace TradingApiTest_CSharp
         }
         static void SendStopOrderRequest(OpenApiMessagesFactory msgFactory, Queue writeQueue)
         {
-            var _msg = msgFactory.CreateStopOrderRequest(testAccountId, testAccessToken, "EURUSD", OpenApiLib.ProtoTradeSide.BUY, 1000000, 0.2, clientMsgId);
+            var _msg = msgFactory.CreateStopOrderRequest(testAccountId, testAccessToken, "EURUSD", ProtoTradeSide.BUY, 1000000, 0.2, clientMsgId);
             if (isDebugIsOn) Console.WriteLine("SendStopOrderRequest() Message to be send:\n{0}", OpenApiMessagesPresentation.ToString(_msg));
             writeQueue.Enqueue(_msg.ToByteArray());
         }

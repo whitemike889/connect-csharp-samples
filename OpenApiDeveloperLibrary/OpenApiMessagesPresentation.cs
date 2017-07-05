@@ -48,6 +48,14 @@ namespace OpenApiDeveloperLibrary
         {
             switch ((ProtoOAPayloadType)msg.PayloadType)
             {
+                case ProtoOAPayloadType.OA_PING_REQ:
+                    var _ping_req = ProtoPingReq.CreateBuilder().MergeFrom(msg.Payload).Build();
+                    return "PingRequest{timestamp:" + _ping_req.Timestamp.ToString() + "}";
+                    break;
+                case ProtoOAPayloadType.OA_PING_RES:
+                    var _ping_res = ProtoPingRes.CreateBuilder().MergeFrom(msg.Payload).Build();
+                    return "PingResponse{timestamp:" + _ping_res.Timestamp + "}";
+                    break;
                 case ProtoOAPayloadType.OA_AUTH_REQ:
                     var _auth_req = ProtoOAAuthReq.CreateBuilder().MergeFrom(msg.Payload).Build();
                     return "AuthRequest{clientId:" + _auth_req.ClientId + ", clientSecret:" + _auth_req.ClientSecret + "}";
@@ -100,15 +108,17 @@ namespace OpenApiDeveloperLibrary
                     return "GetAllSpotSubscriptionsRequest{}";
                 case ProtoOAPayloadType.OA_GET_ALL_SPOT_SUBSCRIPTIONS_RES:
                     String _all_str = "GetAllSpotSubscriptionsResponse{";
-                     ProtoOAGetAllSpotSubscriptionsRes _all_res = ProtoOAGetAllSpotSubscriptionsRes.CreateBuilder().MergeFrom(msg.Payload).Build();
-                     _all_str += "subscriptions=[";
-                     foreach (ProtoOASpotSubscription subscription in _all_res.SpotSubscriptionsList) {
+                    ProtoOAGetAllSpotSubscriptionsRes _all_res = ProtoOAGetAllSpotSubscriptionsRes.CreateBuilder().MergeFrom(msg.Payload).Build();
+                    _all_str += "subscriptions=[";
+                    foreach (ProtoOASpotSubscription subscription in _all_res.SpotSubscriptionsList)
+                    {
                         _all_str += "{AccountId=" + subscription.AccountId + ", SubscriptionId=" + subscription.SubscriptionId + ", SymbolNamesList=[";
-                        foreach (String symbolName in subscription.SymbolNamesList) {
+                        foreach (String symbolName in subscription.SymbolNamesList)
+                        {
                             _all_str += symbolName + ", ";
                         }
                         _all_str += "]}, ";
-                        }
+                    }
                     _all_str += "]}";
                     return _all_str;
                 case ProtoOAPayloadType.OA_SPOT_EVENT:
@@ -225,7 +235,7 @@ namespace OpenApiDeveloperLibrary
         }
         static public string OpenApiPositionToString(ProtoOAPosition position)
         {
-            var _str = "Position{positionId:" + position.PositionId.ToString() + ", positionStatus:" + OpenApiPositionStatusToString(position.PositionStatus) + 
+            var _str = "Position{positionId:" + position.PositionId.ToString() + ", positionStatus:" + OpenApiPositionStatusToString(position.PositionStatus) +
                 ", accountId:" + position.AccountId.ToString();
             _str += ", tradeSide:" + TradeSideToString(position.TradeSide);
             _str += ", symbolName:" + position.SymbolName + ", volume:" + position.Volume.ToString() + ", entryPrice:" + position.EntryPrice.ToString() + ", swap:" + position.Swap.ToString() +
